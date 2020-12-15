@@ -31,6 +31,15 @@ pub fn load<'a>(url: &str) -> Result<Box<dyn NovelProvider>, String> {
   Err(err)
 }
 
+pub fn print_supported_websites() {
+  let providers = get_list_of_providers();
+
+  print!("Supported websites: \n");
+  for provider in providers {
+    print!("{}\n", provider.get_name());
+  }
+}
+
 fn get_list_of_providers() -> Vec<Box<dyn NovelProvider>> {
   return vec![
     Box::new(Boxnovel::new()),
