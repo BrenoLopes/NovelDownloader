@@ -1,7 +1,10 @@
-use regex::Regex;
 use super::boxnovel::Boxnovel;
+use crate::novels::eatapplepies::EatApplePies;
 
 pub trait NovelProvider {
+  /// Check if this provider support the url taken as parameter.
+  fn supports_url(&self, url: &str) -> bool;
+
   /// This function just print the name of the provider that is implementing this on runtime
   fn get_name(&self) -> String;
 
@@ -16,61 +19,21 @@ pub trait NovelProvider {
 }
 
 pub fn load<'a>(url: &str) -> Result<Box<dyn NovelProvider>, String> {
-  let provider_regex = Regex::new(r"^(https?://)?([\s\S]*\.)?boxnovel.com/?[\s\S]*$")
-    .expect("Could not parse and load the regex engine.");
+  let providers = get_list_of_providers();
 
-  if provider_regex.is_match(url) {
-    return Ok(
-      Box::new(Boxnovel::new())
-    );
+  for provider in providers {
+    if provider.supports_url(url) {
+      return Ok(provider);
+    }
   }
 
   let err = format!("There is no supported provider for url \"{}\"", url);
   Err(err)
 }
 
-#[test]
-fn test_provider_simple() {
-  let expected = "https://boxnovel.com".to_string();
-  let provider = load(&expected)
-    .expect("This test should pass.");
-
-  assert_eq!("boxnovel.com".to_string(), provider.get_name())
-}
-
-#[test]
-fn test_provider_with_domain() {
-  let expected = "https://test.boxnovel.com".to_string();
-  let provider = load(&expected)
-    .expect("This test should pass.");
-
-  assert_eq!("boxnovel.com".to_string(), provider.get_name())
-}
-
-#[test]
-fn test_provider_long() {
-  let expected = "https://boxnovel.com/novel/i-might-be-a-fake-cultivator/".to_string();
-  let provider = load(&expected)
-    .expect("This test should pass.");
-
-  assert_eq!("boxnovel.com".to_string(), provider.get_name())
-}
-
-#[test]
-fn test_provider_get_name_from_thread() {
-  use std::thread;
-
-  let url = "https://boxnovel.com".to_string();
-
-  let thread = thread::spawn(move || {
-    let provider = load(&url)
-      .expect("Failed to load the provider");
-
-    let expected = "boxnovel.com".to_string();
-    let received: String = provider.get_name();
-
-    assert_eq!(expected, received, "The provider should be accessible from multiple threads.")
-  });
-  thread.join()
-    .unwrap();
+fn get_list_of_providers() -> Vec<Box<dyn NovelProvider>> {
+  return vec![
+    Box::new(Boxnovel::new()),
+    Box::new(EatApplePies::new())
+  ];
 }

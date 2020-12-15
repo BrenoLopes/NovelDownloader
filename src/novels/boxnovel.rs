@@ -2,6 +2,8 @@ use easy_scraper::Pattern;
 
 use crate::novels::providers::NovelProvider;
 
+use regex::Regex;
+
 #[derive(Copy, Clone)]
 pub struct Boxnovel {}
 
@@ -9,10 +11,15 @@ impl Boxnovel {
   pub fn new() -> Boxnovel { return Boxnovel{}; }
 }
 
-unsafe impl Send for Boxnovel {}
-
 impl NovelProvider for Boxnovel
 {
+  fn supports_url(&self, url: &str) -> bool {
+    let re = Regex::new(r"^(https?://)?([\s\S]*\.)?boxnovel.com(/[\s\S]*)?$")
+      .expect("Could not parse and load the regex engine.");
+
+    return re.is_match(url);
+  }
+
   fn get_name(&self) -> String {
     return "boxnovel.com".to_string();
   }
@@ -74,22 +81,84 @@ impl NovelProvider for Boxnovel
   }
 }
 
-#[test]
-fn test_boxnovel_get_name() {
-  let guinea_pig = Boxnovel::new();
+#[cfg(test)]
+mod tests {
+  use crate::novels::providers::{NovelProvider};
+  use crate::novels::boxnovel::Boxnovel;
 
-  let expected = "boxnovel.com".to_string();
-  let received = guinea_pig.get_name();
+  #[test]
+  fn test_supports_url_simple() {
+    let url = "https://boxnovel.com";
 
-  assert_eq!(expected, received, "The names must match!")
-}
+    let expected = true;
+    let received = Boxnovel::new().supports_url(url);
 
-#[test]
-fn test_boxnovel_get_release_link() {
-  let guinea_pig = Boxnovel::new();
+    assert_eq!(expected, received, "It should support this url.");
+  }
 
-  let html = r#"
-  <div id="oh-no-strip-me">
+  #[test]
+  fn test_supports_url_with_domain() {
+    let url = "https://test.boxnovel.com";
+
+    let expected = true;
+    let received = Boxnovel::new().supports_url(url);
+
+    assert_eq!(expected, received, "It should support this url.");
+  }
+
+  #[test]
+  fn test_supports_url_long() {
+    let url = "https://boxnovel.com/novel/i-might-be-a-fake-cultivator/";
+
+    let expected = true;
+    let received = Boxnovel::new().supports_url(url);
+
+    assert_eq!(expected, received, "It should support this url.");
+  }
+
+  #[test]
+  fn test_not_supports_url_nonsense() {
+    let url = "https://boxnovel.com.nonsence/novel/i-might-be-a-fake-cultivator/";
+
+    let expected = false;
+    let received = Boxnovel::new().supports_url(url);
+
+    assert_eq!(expected, received, "It should not support this url.");
+  }
+
+  #[test]
+  fn test_provider_get_name_from_thread() {
+    use std::thread;
+
+    let thread = thread::spawn(move || {
+      let provider = Boxnovel::new();
+
+      let expected = "boxnovel.com".to_string();
+      let received: String = provider.get_name();
+
+      assert_eq!(expected, received, "The provider should be accessible from multiple threads.")
+    });
+    thread.join()
+      .unwrap();
+  }
+
+
+  #[test]
+  fn test_boxnovel_get_name() {
+    let guinea_pig = Boxnovel::new();
+
+    let expected = "boxnovel.com".to_string();
+    let received = guinea_pig.get_name();
+
+    assert_eq!(expected, received, "The names must match!")
+  }
+
+  #[test]
+  fn test_boxnovel_get_release_link() {
+    let guinea_pig = Boxnovel::new();
+
+    let html = r#"
+  <div id="oh">
     <ul class="main version-chap">
       <li class="wp-manga-chapter">
         <!--Box Novel put it's latest chapter at the top of the page instead of the bottom-->
@@ -103,25 +172,25 @@ fn test_boxnovel_get_release_link() {
   </div>
   "#;
 
-  let expected = vec![
-    "https://test.com/1".to_string(),
-    "https://test.com/2".to_string(),
-    "https://test.com/3".to_string(),
-    "https://test.com/4".to_string(),
-    "https://test.com/5".to_string(),
-  ];
+    let expected = vec![
+      "https://test.com/1".to_string(),
+      "https://test.com/2".to_string(),
+      "https://test.com/3".to_string(),
+      "https://test.com/4".to_string(),
+      "https://test.com/5".to_string(),
+    ];
 
-  let received = guinea_pig.get_release_links(&html)
-    .expect("Could not parse the html to get the release links");
+    let received = guinea_pig.get_release_links(&html)
+      .expect("Could not parse the html to get the release links");
 
-  assert_eq!(expected, received, "The links in the list should match");
-}
+    assert_eq!(expected, received, "The links in the list should match");
+  }
 
-#[test]
-fn test_boxnovel_get_release_link_un_reversed() {
-  let guinea_pig = Boxnovel::new();
+  #[test]
+  fn test_boxnovel_get_release_link_un_reversed() {
+    let guinea_pig = Boxnovel::new();
 
-  let html = r#"
+    let html = r#"
   <div id="oh-no-strip-me">
     <ul class="main version-chap">
       <li class="wp-manga-chapter">
@@ -136,26 +205,26 @@ fn test_boxnovel_get_release_link_un_reversed() {
   </div>
   "#;
 
-  let expected = vec![
-    "https://test.com/1".to_string(),
-    "https://test.com/2".to_string(),
-    "https://test.com/3".to_string(),
-    "https://test.com/4".to_string(),
-    "https://test.com/5".to_string(),
-  ];
+    let expected = vec![
+      "https://test.com/1".to_string(),
+      "https://test.com/2".to_string(),
+      "https://test.com/3".to_string(),
+      "https://test.com/4".to_string(),
+      "https://test.com/5".to_string(),
+    ];
 
-  let received = guinea_pig.get_release_links(&html)
-    .expect("Could not parse the html to get the release links");
+    let received = guinea_pig.get_release_links(&html)
+      .expect("Could not parse the html to get the release links");
 
-  assert_ne!(expected, received, "The links in the list should not match because it's not \
+    assert_ne!(expected, received, "The links in the list should not match because it's not \
     reversed");
-}
+  }
 
-#[test]
-fn test_boxnovel_get_chapter() {
-  let guinea_pig = Boxnovel::new();
+  #[test]
+  fn test_boxnovel_get_chapter() {
+    let guinea_pig = Boxnovel::new();
 
-  let html = r#"
+    let html = r#"
     <html>
       <div class="random">
         <h1>RANDOM</h1>
@@ -177,11 +246,12 @@ fn test_boxnovel_get_chapter() {
     </html>
   "#;
 
-  let expected =
-    "<p>Paragrath 01</p><p>Paragrath 02</p><p>Paragrath 03</p><p>Paragrath 04</p><p>Paragrath 05</p>";
+    let expected =
+      "<p>Paragrath 01</p><p>Paragrath 02</p><p>Paragrath 03</p><p>Paragrath 04</p><p>Paragrath 05</p>";
 
-  let received = guinea_pig.get_chapter(&html)
-    .expect("Should not have any errors in the parsing!");
+    let received = guinea_pig.get_chapter(&html)
+      .expect("Should not have any errors in the parsing!");
 
-  assert_eq!(expected, received, "This test should pass because both results must return true");
+    assert_eq!(expected, received, "This test should pass because both results must return true");
+  }
 }
