@@ -1,4 +1,4 @@
-use clap::{Arg, App};
+use clap::{Arg, App, ArgGroup};
 use std::ffi::OsString;
 
 pub struct CmdLineArgs {
@@ -21,16 +21,16 @@ fn load_from<I, T>(args: I) -> Result<CmdLineArgs, clap::Error>
     T: Into<OsString> + Clone,{
 
   let app_matches = App::new("Novel Downloader")
-    .version("0.1.1")
+    .version("1.0.1")
     .author("Breno P. <brenolprimo@gmail.com>")
-    .long_about("This application downloads all the chapters from a novel's summary page \
-      and put it all inside a single file.")
+    .long_about("This application downloads all the chapters from a novel's table of content \
+      page and put it all inside a single file. You can then create an ebook format with it later \
+      by using it as input in calibre and modifying the look and feel based in your preferences.")
     .arg(Arg::with_name("url")
       .short("u")
       .long("url")
       .value_name("URL")
-      .required(true)
-      .help("Sets the summary url of a novel to download")
+      .help("The novel's table of content url")
       .takes_value(true))
     .arg(Arg::with_name("output")
       .short("o")
@@ -47,12 +47,31 @@ fn load_from<I, T>(args: I) -> Result<CmdLineArgs, clap::Error>
       .default_value("C:\\Program Files\\Calibre2")
       .help("The directory of you installed calibre")
       .takes_value(true))
+    .arg(Arg::with_name("supported-websites")
+      .long("supported-websites")
+      .value_name("BOOLEAN")
+      .help("Print all the websites supported by this application")
+      .takes_value(false))
+    .group(ArgGroup::with_name("default")
+      .arg("url")
+      .arg("output")
+      .arg("calibre-dir")
+      .multiple(true)
+      .required(true))
+    .group(ArgGroup::with_name("help")
+      .arg("supported-websites"))
     .get_matches_from_safe(args);
 
   let matches = match app_matches {
     Ok(d) => d,
-    Err(e) => { return Err(e) }
+    Err(e) => return Err(e)
   };
+
+  if matches.is_present("supported-websites") {
+    crate::novels::providers::print_supported_websites();
+
+    std::process::exit(0);
+  }
 
   // If it fails it'll automatically show the help message in the console.
   let url = matches.value_of("url").unwrap().to_string();
