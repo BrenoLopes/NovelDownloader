@@ -49,7 +49,7 @@ mod tests {
   }
 
   #[test]
-  fn can_find_calibre_convert_in_an_invalid_directory() {
+  fn can_not_find_calibre_convert_in_an_invalid_directory() {
     let directory = "C:\\Program Files\\Calibre1231";
 
     let expected = false;
