@@ -1,0 +1,16 @@
+[package]
+name = "noveldownloader"
+version = "0.1.0"
+authors = ["BrenoLopes"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+regex = "1"
+clap = "2.33.3"
+reqwest = { version = "0.10.9", features = ["blocking", "json"] }
+threadpool = "1.8.1"
+easy-scraper = "0.2.0"
+simple_disk_cache = "0.1.2"
+num_cpus = "1.13.0"
