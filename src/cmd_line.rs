@@ -1,4 +1,4 @@
-use clap::{Arg, App, ArgGroup};
+use clap::{Arg, App, ArgGroup, Error, ErrorKind};
 use std::ffi::OsString;
 
 pub struct CmdLineArgs {
@@ -73,8 +73,14 @@ fn load_from<I, T>(args: I) -> Result<CmdLineArgs, clap::Error>
     std::process::exit(0);
   }
 
-  // If it fails it'll automatically show the help message in the console.
-  let url = matches.value_of("url").unwrap().to_string();
+  let url = match matches.value_of("url") {
+    None => return Err(
+      Error::with_description(
+        "Failed to read the url arg",
+        ErrorKind::ArgumentNotFound)
+    ),
+    Some(v) => v.to_string()
+  };
 
   let mut output = matches.value_of("output").unwrap();
 
