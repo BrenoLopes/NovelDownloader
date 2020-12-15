@@ -95,23 +95,4 @@ mod test {
       Err(_) => assert!(true)
     }
   }
-
-  #[test]
-  fn test_output_ends_with_html() {
-    let args = [
-      "noveldownloader.exe",
-      "--url",
-      "https://www.test.com",
-      "--output",
-      "test.txt",
-      "--calibre-dir",
-      "C:\\Program Files\\Calibre2"
-    ].iter();
-
-    let expected = "test.txt.html".to_string();
-    let received = load_from(args).unwrap().output;
-
-    assert_eq!(expected, received, "The output file must end with .html to be parsed correctly \
-      by calibre");
-  }
 }
