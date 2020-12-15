@@ -17,7 +17,7 @@ pub fn start_workers(
 ) -> bool {
   // Initializing the counter to show the progress
   let mut counter = 1;
-  let n = link_list.len();
+  let n = link_list.len() - 1;
 
   // Transmitting channel
   let (transmitter, receiver): (Sender<Message>, Receiver<Message>) = channel();
