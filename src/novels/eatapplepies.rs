@@ -119,27 +119,6 @@ impl NovelProvider for EatApplePies
 mod tests {
   use crate::novels::eatapplepies::EatApplePies;
   use crate::novels::providers::NovelProvider;
-  use crate::url;
-  use std::io::Write;
-
-  #[test]
-  fn test_main() {
-    let url1 = "https://eatapplepies.com/tcf-chapter-1/";
-    let url2 = "https://eatapplepies.com/tcf-chapter-2/";
-
-    let html1 = url::download(url1).unwrap();
-    let html2 = url::download(url2).unwrap();
-
-    let parser = EatApplePies::new();
-
-    let chapter1 = parser.get_chapter(&html1).unwrap();
-    let chapter2 = parser.get_chapter(&html2).unwrap();
-
-    let mut f = std::fs::File::create("AFF.html").unwrap();
-    f.write(chapter1.as_bytes()).unwrap();
-    f.write("\n\n".as_bytes()).unwrap();
-    f.write(chapter2.as_bytes()).unwrap();
-  }
 
   #[test]
   fn test_supports_url_simple() {
