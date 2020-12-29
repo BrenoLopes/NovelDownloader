@@ -20,8 +20,10 @@ fn load_from<I, T>(args: I) -> Result<CmdLineArgs, clap::Error>
     I: Iterator<Item = T>,
     T: Into<OsString> + Clone,{
 
+  let app_version = env!("CARGO_PKG_VERSION");
+
   let app_matches = App::new("Novel Downloader")
-    .version("1.0.1")
+    .version(app_version)
     .author("Breno P. <brenolprimo@gmail.com>")
     .long_about("This application downloads all the chapters from a novel's table of content \
       page and put it all inside a single file. You can then create an ebook format with it later \
