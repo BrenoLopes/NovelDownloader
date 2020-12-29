@@ -11,4 +11,4 @@ If you installed in in the default ``C:\Program Files\Calibre2`` you can ommit t
 For more details run ``noveldownloader -h``
 
 ## Supported websites
-At the momment the app only supports novels from [boxnovel.com](https://boxnovel.com). I'm planning of including more in the future.
+For the complete list, run ``noveldownloader --supported-websites`` for help.
