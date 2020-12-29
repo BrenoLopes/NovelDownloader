@@ -1,5 +1,6 @@
 use super::boxnovel::Boxnovel;
 use crate::novels::eatapplepies::EatApplePies;
+use crate::novels::wuxiaworldco::WuxiaWorldCo;
 
 pub trait NovelProvider {
   /// Check if this provider support the url taken as parameter.
@@ -43,6 +44,7 @@ pub fn print_supported_websites() {
 fn get_list_of_providers() -> Vec<Box<dyn NovelProvider>> {
   return vec![
     Box::new(Boxnovel::new()),
-    Box::new(EatApplePies::new())
+    Box::new(EatApplePies::new()),
+    Box::new(WuxiaWorldCo::new())
   ];
 }
