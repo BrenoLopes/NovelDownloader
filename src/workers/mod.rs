@@ -17,7 +17,7 @@ pub fn start_workers(
 ) -> bool {
   // Initializing the counter to show the progress
   let mut counter = 1;
-  let n = link_list.len() - 1;
+  let n = link_list.len();
 
   // Transmitting channel
   let (transmitter, receiver): (Sender<Message>, Receiver<Message>) = channel();
@@ -27,7 +27,7 @@ pub fn start_workers(
 
   for url in link_list {
     if in_cache(url, &mut cache) {
-      println!("Loaded chapter {} of {} from the cache!", counter, n);
+      println!("Loaded chapter {} of {} from the cache!", counter, n - 1);
       counter += 1;
       continue;
     }

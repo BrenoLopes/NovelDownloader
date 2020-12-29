@@ -24,14 +24,14 @@ pub fn start_consumer<'a>(
         cache.put(&message.url, &message.data)
           .expect("Couldn't write to cache");
 
-        println!("Downloaded chapter {} of {}...", novel_counter, n);
+        println!("Downloaded chapter {} of {}...", novel_counter, n - 1);
         novel_counter += 1;
       },
       MyResult::Failed => {
         cache.put(&message.url, &"".to_string())
           .expect("Couldn't write to cache");
 
-        println!("Failed to download chapter {} of {}. Error: {}...", novel_counter, n, message.data);
+        println!("Failed to download chapter {} of {}. Error: {}...", novel_counter, n - 1, message.data);
         novel_counter += 1;
         had_errors = true;
       }
