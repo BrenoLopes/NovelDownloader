@@ -13,5 +13,9 @@ If you installed it in the default folder ``C:\Program Files\Calibre2`` you can 
 
 For more details run ``java -jar noveldownloader.jar -h``
 
+## Requirements
+Java 8+
+Calibre - E-book Management
+
 ## Supported websites
 For the complete list, run ``java -jar noveldownloader.jar --supported-websites`` for help.
