@@ -15,6 +15,7 @@ For more details run ``java -jar noveldownloader.jar -h``
 
 ## Requirements
 Java 8+
+
 Calibre - E-book Management
 
 ## Supported websites
