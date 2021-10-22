@@ -3,6 +3,7 @@ package br.balladesh.noveldownloader.providers
 import br.balladesh.noveldownloader.CmdParams
 import br.balladesh.noveldownloader.DiskPersist
 import br.balladesh.noveldownloader.SSLHelper
+import br.balladesh.noveldownloader.cleanFileParagraphs
 import org.buildobjects.process.ProcBuilder
 import org.jsoup.Connection
 import org.jsoup.Jsoup
@@ -13,7 +14,6 @@ import java.io.OutputStreamWriter
 import java.lang.Exception
 import java.nio.file.FileSystems
 import java.nio.file.Path
-import java.util.*
 import java.util.concurrent.ExecutorCompletionService
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -161,5 +161,7 @@ class BoxNovel : NovelProvider
       println("Couldn't find calibre. Please install it in the default folder or tell the app it's location. ${e.message}")
       exitProcess(1)
     }
+
+    cleanFileParagraphs(outputPath)
   }
 }
