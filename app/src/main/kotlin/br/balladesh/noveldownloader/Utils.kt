@@ -14,18 +14,10 @@ fun cleanFileParagraphs(file: Path)
     Files.write(
       file,
       buffer
-        .replace(Regex("(?m)^[\\r\\n]+"), "")
+        .replace(Regex("(?m)^[\\r\\n\\u00A0]+"), "")
         .replace(Regex("(?m)^(.+)$"), "$1\n")
         .toByteArray()
     )
-
-//    Files.write(
-//      file,
-//      stringBuilder
-//        .replace(Regex("(?m)^[\r\n]+"), "")
-//        .replace(Regex("(?m)^(#\\s.+)"), "\n$1")
-//        .toByteArray()
-//    )
   } catch(e: Exception) {
     println(e.message)
   }
