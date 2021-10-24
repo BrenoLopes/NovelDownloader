@@ -1,6 +1,7 @@
 package br.balladesh.noveldownloader
 
 import br.balladesh.noveldownloader.providers.NovelProviderFactory
+import java.nio.file.FileSystems
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -13,4 +14,6 @@ fun main(args: Array<String>) {
   }
 
   provider.downloadNovel(params)
+
+  cleanTmpFile()
 }
