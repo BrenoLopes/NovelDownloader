@@ -20,3 +20,7 @@ Calibre - E-book Management
 
 ## Supported websites
 For the complete list, run ``java -jar noveldownloader.jar --supported-websites`` for help.
+
+## Disclaimer
+This tools is only to be used for creating ebooks for personal use. Please do not sell anything created with this tool nor 
+republish it elsewhere. If you can, please support the websites.
