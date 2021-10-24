@@ -1,5 +1,6 @@
 package br.balladesh.noveldownloader
 
+import br.balladesh.noveldownloader.providers.Chapter
 import java.io.*
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -94,4 +95,19 @@ class DiskPersist(private val path: String = ".cache")
   companion object {
     private val lock = ReentrantLock()
   }
+}
+
+fun mergeChapters(chapterList: List<Chapter>, persist: DiskPersist): Path {
+  val path = FileSystems.getDefault().getPath("tmp.html")
+  val osw = OutputStreamWriter(FileOutputStream(path.toFile()), "utf-8")
+
+  for (chapter in chapterList) {
+    val html = persist.get<String, String>(chapter.url).orElse("")
+    osw.write(html + "\n")
+  }
+
+  println("Closing")
+  osw.close()
+
+  return path
 }
