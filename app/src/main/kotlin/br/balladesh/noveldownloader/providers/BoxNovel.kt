@@ -1,6 +1,7 @@
 package br.balladesh.noveldownloader.providers
 
 import br.balladesh.noveldownloader.*
+import org.jsoup.Connection
 
 class BoxNovel : NovelProvider
 {
@@ -15,10 +16,24 @@ class BoxNovel : NovelProvider
   }
 
   override fun downloadNovel(params: CmdParams) {
-    val theUrl = "${params.url}/ajax/chapters/".replace(Regex("/{2,}"), "/").replace("https:/", "https://")
-    val chapterList = downloadChapters(theUrl, this.persist, ".wp-manga-chapter a")
+    val theUrl = "${params.url}/ajax/chapters/"
+      .replace(Regex("/{2,}"), "/")
+      .replace("https:/", "https://")
 
-    fetchAllChapters(chapterList, ".read-container .reading-content .text-left", this.persist)
+    val chapterList = downloadChapters(
+      theUrl,
+      this.persist,
+      ".wp-manga-chapter a",
+      false,
+      Connection.Method.POST
+    )
+
+    fetchAllChapters(
+      chapterList,
+      ".read-container .reading-content .text-left",
+      this.persist,
+      Connection.Method.GET
+    )
 
     val inputPath = mergeChapters(chapterList, this.persist)
 
