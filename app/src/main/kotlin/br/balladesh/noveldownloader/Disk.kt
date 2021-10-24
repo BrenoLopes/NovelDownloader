@@ -98,7 +98,7 @@ class DiskPersist(private val path: String = ".cache")
 }
 
 fun mergeChapters(chapterList: List<Chapter>, persist: DiskPersist): Path {
-  val path = FileSystems.getDefault().getPath("tmp.html")
+  val path = FileSystems.getDefault().getPath(getTmpFileName())
   val osw = OutputStreamWriter(FileOutputStream(path.toFile()), "utf-8")
 
   for (chapter in chapterList) {
@@ -110,4 +110,13 @@ fun mergeChapters(chapterList: List<Chapter>, persist: DiskPersist): Path {
   osw.close()
 
   return path
+}
+
+fun getTmpFileName(): String {
+  return "tmp.html"
+}
+
+fun cleanTmpFile() {
+  val tmpFile = FileSystems.getDefault().getPath(getTmpFileName()).toFile()
+  if (tmpFile.exists()) tmpFile.delete()
 }
